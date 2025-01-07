@@ -1,0 +1,176 @@
+[gd_scene load_steps=3 format=3 uid="uid://bpeky54e5d4vv"]
+
+[ext_resource type="Script" path="res://fight_scene.gd" id="1_8cb5h"]
+[ext_resource type="Script" path="res://inventory.gd" id="2_8dwdi"]
+
+[node name="fight_scene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8cb5h")
+
+[node name="Attack" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 146.0
+offset_top = 197.0
+offset_right = 296.0
+offset_bottom = 298.0
+
+[node name="AttackHead" type="Button" parent="Attack"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "атаковать голову"
+
+[node name="AttackBody" type="Button" parent="Attack"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "атаковать корпус"
+
+[node name="AttackLegs" type="Button" parent="Attack"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "атаковать ноги"
+
+[node name="Defence" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 338.0
+offset_top = 198.0
+offset_right = 489.0
+offset_bottom = 299.0
+
+[node name="DefenceHead" type="Button" parent="Defence"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "защитить голову"
+
+[node name="DefenceBody" type="Button" parent="Defence"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "защитить корпус"
+
+[node name="DefenceLegs" type="Button" parent="Defence"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "защитить ноги"
+
+[node name="Output" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 201.0
+offset_top = 344.0
+offset_right = 442.0
+offset_bottom = 394.0
+text = "здесь текстовая информация"
+
+[node name="GoNext" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 164.0
+offset_top = 234.0
+offset_right = 281.0
+offset_bottom = 265.0
+text = "Идти дальше"
+
+[node name="Fight" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 322.0
+offset_top = 232.0
+offset_right = 514.0
+offset_bottom = 263.0
+text = "Сражаться с монстром"
+
+[node name="BuySth" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 258.0
+offset_top = 169.0
+offset_right = 365.0
+offset_bottom = 200.0
+text = "Приобрести"
+
+[node name="Level_upgrades" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="UpLevel" type="Button" parent="Level_upgrades"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 143.0
+offset_top = 173.0
+offset_right = 234.0
+offset_bottom = 204.0
+text = "Улучшить"
+
+[node name="Strength" type="Button" parent="Level_upgrades"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 160.0
+offset_top = 106.0
+offset_right = 208.0
+offset_bottom = 137.0
+text = "Сила"
+
+[node name="Agility" type="Button" parent="Level_upgrades"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 144.0
+offset_top = 138.0
+offset_right = 228.0
+offset_bottom = 169.0
+text = "Ловкость"
+
+[node name="Intelligence" type="Button" parent="Level_upgrades"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 140.0
+offset_top = 171.0
+offset_right = 235.0
+offset_bottom = 202.0
+text = "Интеллект
+"
+
+[node name="inventory" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_8dwdi")
+
+[node name="ItemList" type="ItemList" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 22.0
+offset_right = 130.0
+offset_bottom = 82.0
+text_overrun_behavior = 0
+item_count = 4
+item_0/text = "меч"
+item_1/text = "броня"
+item_2/text = "амулет"
+item_3/text = "зелье здоровья"
+
+[connection signal="button_up" from="Attack/AttackHead" to="." method="_on_attack_head_button_up"]
+[connection signal="pressed" from="Attack/AttackBody" to="." method="_on_attack_body_pressed"]
+[connection signal="pressed" from="Attack/AttackLegs" to="." method="_on_attack_legs_pressed"]
+[connection signal="pressed" from="Defence/DefenceHead" to="." method="_on_defence_head_pressed"]
+[connection signal="pressed" from="Defence/DefenceBody" to="." method="_on_defence_body_pressed"]
+[connection signal="pressed" from="Defence/DefenceLegs" to="." method="_on_defence_legs_pressed"]
+[connection signal="pressed" from="GoNext" to="." method="_on_go_next_pressed"]
+[connection signal="pressed" from="Fight" to="." method="meet_mob"]
+[connection signal="pressed" from="Level_upgrades/UpLevel" to="." method="level_up"]
+[connection signal="pressed" from="Level_upgrades/Strength" to="." method="_on_strength_pressed"]
+[connection signal="pressed" from="Level_upgrades/Agility" to="." method="_on_agility_pressed"]
+[connection signal="pressed" from="Level_upgrades/Intelligence" to="." method="_on_intelligence_pressed"]
