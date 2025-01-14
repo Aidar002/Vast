@@ -90,6 +90,7 @@ text = "Сражаться с монстром"
 
 [node name="BuySth" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 0
 offset_left = 258.0
 offset_top = 169.0
@@ -98,6 +99,7 @@ offset_bottom = 200.0
 text = "Приобрести"
 
 [node name="Level_upgrades" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -162,6 +164,29 @@ item_1/text = "броня"
 item_2/text = "амулет"
 item_3/text = "зелье здоровья"
 
+[node name="SlimeSpawn" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SlimeIn" type="Button" parent="SlimeSpawn"]
+visible = false
+layout_mode = 0
+offset_left = 617.0
+offset_top = 274.0
+offset_right = 625.0
+offset_bottom = 282.0
+text = "Зайти в логово слизней"
+
+[node name="SlimeOut" type="Button" parent="SlimeSpawn"]
+visible = false
+layout_mode = 0
+offset_left = 616.0
+offset_top = 309.0
+offset_right = 832.0
+offset_bottom = 340.0
+text = "Выйти из логова слизней"
+
 [connection signal="button_up" from="Attack/AttackHead" to="." method="_on_attack_head_button_up"]
 [connection signal="pressed" from="Attack/AttackBody" to="." method="_on_attack_body_pressed"]
 [connection signal="pressed" from="Attack/AttackLegs" to="." method="_on_attack_legs_pressed"]
@@ -174,3 +199,5 @@ item_3/text = "зелье здоровья"
 [connection signal="pressed" from="Level_upgrades/Strength" to="." method="_on_strength_pressed"]
 [connection signal="pressed" from="Level_upgrades/Agility" to="." method="_on_agility_pressed"]
 [connection signal="pressed" from="Level_upgrades/Intelligence" to="." method="_on_intelligence_pressed"]
+[connection signal="pressed" from="SlimeSpawn/SlimeIn" to="." method="_on_slime_in_pressed"]
+[connection signal="pressed" from="SlimeSpawn/SlimeOut" to="." method="_on_slime_out_pressed"]

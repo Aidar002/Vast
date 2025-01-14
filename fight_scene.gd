@@ -1,11 +1,12 @@
 extends Control
 
 enum target {Head, Body, Legs}
-enum STATE {find_money, meet_mob, sphere}
+enum STATE {find_money, meet_mob, sphere, slime_spawn}
 var states = [
-	{'name': STATE.find_money, 'probability': 40},
-	{'name': STATE.meet_mob, 'probability': 50},
-	{'name': STATE.sphere, 'probability': 10}
+	{'name': STATE.find_money, 'probability': 5},
+	{'name': STATE.meet_mob, 'probability': 5},
+	{'name': STATE.sphere, 'probability': 10},
+	{'name': STATE.slime_spawn, 'probability': 80},
 ]
 
 #@onready var inventory = %inventory
@@ -45,7 +46,8 @@ var states = [
 @onready var agility = %Agility
 @onready var intelligence = %Intelligence
 
-
+@onready var slime_in = $SlimeSpawn/SlimeIn
+@onready var slime_out = $SlimeSpawn/SlimeOut
 
 
 
@@ -67,27 +69,29 @@ func random_event():
 	return null
 
 func go_adventure():
-	output.text = "вы путешествуете по миру..."
+	output.text = "путешествуете по миру..."
 	await get_tree().create_timer(2).timeout
 	var current_state = random_event()
 	match current_state:
 		STATE.find_money:
 			player['money'] += 1
-			output.text = 'вы нашли монетку(+1). У вас всего {balance}'.format({'balance': player['money']})
+			output.text = 'нашли монетку(+1). всего {balance}'.format({'balance': player['money']})
 			go_next.visible = true
 		STATE.meet_mob:
 			current_mob = monsters.pick_random()
-			output.text = "вы видите {name}, что будете делать?".format({'name': current_mob['name']})
+			output.text = "видите {name}, что будете делать?".format({'name': current_mob['name']})
 			go_next.visible = true
 			fight.visible = true
 		STATE.sphere:
 			state_sphere()
+		STATE.slime_spawn:
+			slime_spawn()
 			
 			
 func meet_mob():
 	go_next.visible = false
 	fight.visible = false
-	output.text = "вы напали на {name}. Ваш ход".format({'name': current_mob['name']})
+	output.text = "напали на {name}. Ваш ход".format({'name': current_mob['name']})
 	defence.visible = false
 	attack.visible = true
 	
@@ -114,37 +118,37 @@ func attack_process(p_target, p_attack_direction):
 	defence.visible = false
 	var enemy_defence = randi_range(0, 2)
 	if p_target == enemy_defence:
-		output.text = 'Вы ударили в {body_part}. {name} заблокировал вашу атаку.'.format({'name': current_mob['name'], 'body_part': p_attack_direction})
+		output.text = 'ударили в {body_part}. {name} заблокировал вашу атаку.'.format({'name': current_mob['name'], 'body_part': p_attack_direction})
 	else:
 		current_mob['hp'] -= player['damage']
 		if current_mob['hp'] <=0:
 			player['expirience'] += current_mob['expirience']
-			output.text = 'Вы ударили в {body_part} и нанесли {damage} урона и убили {name}. Получено {expirience} опыта, поздравляем'.format({'damage': player['damage'], 'name': current_mob['name'], 'expirience': current_mob['expirience'],'body_part': p_attack_direction })
+			output.text = 'ударили в {body_part} и нанесли {damage} урона и убили {name}. Получено {expirience} опыта, поздравляем'.format({'damage': player['damage'], 'name': current_mob['name'], 'expirience': current_mob['expirience'],'body_part': p_attack_direction })
 			go_next.visible = true
 			return
 		else:
-			output.text = "Вы ударили в {body_part} и нанесли {damage} урона {name}, у него осталось {hp} энергии жизни".format({'damage': player['damage'], 'hp': current_mob['hp'], 'name': current_mob['name'], 'body_part': p_attack_direction})
+			output.text = "Ударили в {body_part} и нанесли {damage} урона {name}, у него осталось {hp} энергии жизни".format({'damage': player['damage'], 'hp': current_mob['hp'], 'name': current_mob['name'], 'body_part': p_attack_direction})
 	defence.visible = true
 	
 	
 func defence_process(p_target, p_defence_direction):
 	var enemy_attack = randi_range(0, 2)
 	if p_target == enemy_attack:
-		output.text = 'Вы отбили атаку в {body_part}.'.format({'body_part': p_defence_direction})
+		output.text = 'Отбили атаку в {body_part}.'.format({'body_part': p_defence_direction})
 	else:
 		player['hp'] -= current_mob['damage']
 		if player['hp'] <= 0:
 			hide_all()
-			output.text = 'Вы погибаете. Бог хаоса ошибся в вас.'
+			output.text = 'Погибаете. Бог хаоса ошибся.'
 			return
 		else:
-			output.text = "{name} наносит вам {damage} урона. У вас осталось {hp} энергии жизни".format({'name': current_mob['name'], 'damage': current_mob['damage'], 'hp': player['hp']})
+			output.text = "{name} наносит {damage} урона. Осталось {hp} энергии жизни".format({'name': current_mob['name'], 'damage': current_mob['damage'], 'hp': player['hp']})
 			
 	defence.visible = false
 	attack.visible = true
 	
 func state_sphere():
-	output.text = "Перед глазами появилась сфера. Чувство эйфории захватывает. Вы знаете, что можете сделать что-то невероятное"
+	output.text = "Перед глазами появилась сфера. Чувство эйфории захватывает. знаете, что можете сделать что-то невероятное"
 	go_next.visible = true
 	up_level.visible = true
 	buy_sth.visible = true
@@ -152,12 +156,12 @@ func state_sphere():
 func level_up():
 	hide_all()
 	if player['expirience'] >= lvl_config[player['lvl']]:
-		output.text = "что вы выберите?"
+		output.text = "что выберите?"
 		strength.visible = true
 		agility.visible = true
 		intelligence.visible = true
 	else: 
-		output.text = "у вас не хватает опыта"
+		output.text = "не хватает опыта"
 		go_next.visible = true
 
 func hide_all():
@@ -188,3 +192,23 @@ func _on_agility_pressed():
 
 func _on_intelligence_pressed():
 	upgrade_player('intelligence')
+
+func slime_spawn():
+	output.text = 'Видите пещеру со слизнями. Войти?'
+	slime_in.visible = true
+	slime_out.visible = true
+	
+	
+	pass
+	
+
+func _on_slime_out_pressed():
+	hide_all()
+	go_adventure()
+	
+
+func _on_slime_in_pressed():
+	hide_all()
+	output.text = 'Пещера кишит слаймами, один из них нападает'
+	current_mob = monsters[0]
+	meet_mob()
