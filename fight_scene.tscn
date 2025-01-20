@@ -60,13 +60,20 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "защитить ноги"
 
-[node name="Output" type="Label" parent="."]
+[node name="Output" type="RichTextLabel" parent="."]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 201.0
-offset_top = 344.0
-offset_right = 442.0
-offset_bottom = 394.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -265.0
+offset_top = -186.0
+offset_right = 265.0
+offset_bottom = -115.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "здесь текстовая информация"
 
 [node name="GoNext" type="Button" parent="."]
@@ -88,59 +95,77 @@ offset_right = 514.0
 offset_bottom = 263.0
 text = "Сражаться с монстром"
 
-[node name="BuySth" type="Button" parent="."]
-unique_name_in_owner = true
-visible = false
-layout_mode = 0
-offset_left = 258.0
-offset_top = 169.0
-offset_right = 365.0
-offset_bottom = 200.0
-text = "Приобрести"
-
 [node name="Level_upgrades" type="Control" parent="."]
-visible = false
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 303.0
+offset_top = 36.0
+offset_right = 509.0
+offset_bottom = 242.0
+
+[node name="BuySth" type="Button" parent="Level_upgrades"]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = 107.0
+offset_bottom = 31.0
+text = "Приобрести"
 
 [node name="UpLevel" type="Button" parent="Level_upgrades"]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 143.0
-offset_top = 173.0
-offset_right = 234.0
-offset_bottom = 204.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -91.0
+offset_bottom = 31.0
+grow_horizontal = 0
 text = "Улучшить"
 
 [node name="Strength" type="Button" parent="Level_upgrades"]
 unique_name_in_owner = true
-visible = false
-layout_mode = 0
-offset_left = 160.0
-offset_top = 106.0
-offset_right = 208.0
-offset_bottom = 137.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = 16.0
+offset_right = 24.0
+offset_bottom = 47.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "Сила"
 
 [node name="Agility" type="Button" parent="Level_upgrades"]
 unique_name_in_owner = true
-visible = false
-layout_mode = 0
-offset_left = 144.0
-offset_top = 138.0
-offset_right = 228.0
-offset_bottom = 169.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -42.0
+offset_top = -15.5
+offset_right = 42.0
+offset_bottom = 15.5
+grow_horizontal = 2
+grow_vertical = 2
 text = "Ловкость"
 
 [node name="Intelligence" type="Button" parent="Level_upgrades"]
 unique_name_in_owner = true
-visible = false
-layout_mode = 0
-offset_left = 140.0
-offset_top = 171.0
-offset_right = 235.0
-offset_bottom = 202.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.5
+offset_top = -47.5
+offset_right = 47.5
+offset_bottom = -16.5
+grow_horizontal = 2
+grow_vertical = 2
 text = "Интеллект
 "
 
@@ -151,26 +176,28 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_8dwdi")
 
-[node name="ItemList" type="ItemList" parent="."]
+[node name="ItemList" type="ItemList" parent="inventory"]
 layout_mode = 0
 offset_left = 5.0
 offset_top = 22.0
-offset_right = 130.0
-offset_bottom = 82.0
+offset_right = 238.0
+offset_bottom = 217.0
 text_overrun_behavior = 0
-item_count = 4
-item_0/text = "меч"
-item_1/text = "броня"
-item_2/text = "амулет"
-item_3/text = "зелье здоровья"
 
 [node name="SlimeSpawn" type="Control" parent="."]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="AttackAgainSlime" type="Button" parent="SlimeSpawn"]
+layout_mode = 0
+offset_left = 626.0
+offset_top = 272.0
+offset_right = 805.0
+offset_bottom = 303.0
+text = "Снова искать жертву"
+
 [node name="SlimeIn" type="Button" parent="SlimeSpawn"]
-visible = false
 layout_mode = 0
 offset_left = 617.0
 offset_top = 274.0
@@ -179,13 +206,70 @@ offset_bottom = 282.0
 text = "Зайти в логово слизней"
 
 [node name="SlimeOut" type="Button" parent="SlimeSpawn"]
-visible = false
 layout_mode = 0
 offset_left = 616.0
 offset_top = 309.0
 offset_right = 832.0
 offset_bottom = 340.0
-text = "Выйти из логова слизней"
+text = "Пойти дальше"
+
+[node name="Desert" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AttackAgainDesert" type="Button" parent="Desert"]
+layout_mode = 0
+offset_left = 626.0
+offset_top = 272.0
+offset_right = 805.0
+offset_bottom = 303.0
+text = "Снова искать жертву"
+
+[node name="DesertIn" type="Button" parent="Desert"]
+layout_mode = 0
+offset_left = 620.0
+offset_top = 276.0
+offset_right = 803.0
+offset_bottom = 307.0
+text = "Исследовать пустыну"
+
+[node name="DesertOut" type="Button" parent="Desert"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 311.0
+offset_right = 788.0
+offset_bottom = 342.0
+text = "Выйти из пустыни"
+
+[node name="Forest" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="AttackAgainForest" type="Button" parent="Forest"]
+layout_mode = 0
+offset_left = 635.0
+offset_top = 169.0
+offset_right = 760.0
+offset_bottom = 200.0
+text = "Найти добычу"
+
+[node name="ForestIn" type="Button" parent="Forest"]
+layout_mode = 0
+offset_left = 652.0
+offset_top = 171.0
+offset_right = 756.0
+offset_bottom = 202.0
+text = "Войти в лес"
+
+[node name="ForestOut" type="Button" parent="Forest"]
+layout_mode = 0
+offset_left = 630.0
+offset_top = 207.0
+offset_right = 782.0
+offset_bottom = 238.0
+text = "Продолжить путь"
 
 [connection signal="button_up" from="Attack/AttackHead" to="." method="_on_attack_head_button_up"]
 [connection signal="pressed" from="Attack/AttackBody" to="." method="_on_attack_body_pressed"]
@@ -199,5 +283,13 @@ text = "Выйти из логова слизней"
 [connection signal="pressed" from="Level_upgrades/Strength" to="." method="_on_strength_pressed"]
 [connection signal="pressed" from="Level_upgrades/Agility" to="." method="_on_agility_pressed"]
 [connection signal="pressed" from="Level_upgrades/Intelligence" to="." method="_on_intelligence_pressed"]
+[connection signal="item_selected" from="inventory/ItemList" to="inventory" method="_on_inventory_list_item_selected"]
+[connection signal="pressed" from="SlimeSpawn/AttackAgainSlime" to="." method="_on_attack_again_pressed"]
 [connection signal="pressed" from="SlimeSpawn/SlimeIn" to="." method="_on_slime_in_pressed"]
 [connection signal="pressed" from="SlimeSpawn/SlimeOut" to="." method="_on_slime_out_pressed"]
+[connection signal="pressed" from="Desert/AttackAgainDesert" to="." method="_on_attack_again_pressed"]
+[connection signal="pressed" from="Desert/DesertIn" to="." method="_on_desert_in_pressed"]
+[connection signal="pressed" from="Desert/DesertOut" to="." method="_on_desert_out_pressed"]
+[connection signal="pressed" from="Forest/AttackAgainForest" to="." method="_on_attack_again_pressed"]
+[connection signal="pressed" from="Forest/ForestIn" to="." method="_on_forest_in_pressed"]
+[connection signal="pressed" from="Forest/ForestOut" to="." method="_on_forest_out_pressed"]

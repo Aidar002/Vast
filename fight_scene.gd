@@ -1,25 +1,31 @@
 extends Control
+class_name main
 
 enum target {Head, Body, Legs}
-enum STATE {find_money, meet_mob, sphere, slime_spawn}
+enum STATE {find_money, meet_mob, sphere, slime_spawn, desert_spawn, forest_spawn}
 var states = [
 	{'name': STATE.find_money, 'probability': 5},
 	{'name': STATE.meet_mob, 'probability': 5},
 	{'name': STATE.sphere, 'probability': 10},
-	{'name': STATE.slime_spawn, 'probability': 80},
+	{'name': STATE.slime_spawn, 'probability': 20},
+	{'name': STATE.desert_spawn, 'probability': 20},
+	{'name': STATE.forest_spawn, 'probability': 40},
 ]
-
-#@onready var inventory = %inventory
+#инвентарь
+@onready var inventory = %inventory
+@onready var item_list = $inventory/ItemList
+#
 
 @onready var output = %Output
-@onready var slime:= {'name': 'слайм', 'hp': 10, 'alive': true, 'damage': 2, 'expirience': 5}
-@onready var drog:= {'name': 'дрог', 'hp': 15, 'alive': true, 'damage': 3, 'expirience': 5}
-@onready var monsters = [slime, drog]
+
 @onready var current_mob:Dictionary
-@onready var player:= {
-	'hp': 20,
+@onready var current_location:String
+
+static var player:= {
+	'hp': 100,
+	'max_hp': 100,
 	'alive': true,
-	'damage': 20,
+	'damage': 40,
 	'money': 0,
 	'expirience': 0,
 	'lvl': 1,
@@ -45,9 +51,18 @@ var states = [
 @onready var strength = %Strength
 @onready var agility = %Agility
 @onready var intelligence = %Intelligence
-
+#для локации слаймов
 @onready var slime_in = $SlimeSpawn/SlimeIn
 @onready var slime_out = $SlimeSpawn/SlimeOut
+@onready var attack_again = $SlimeSpawn/AttackAgainSlime
+#для локации пустыни
+@onready var attack_again_desert = $Desert/AttackAgainDesert
+@onready var desert_in = $Desert/DesertIn
+@onready var desert_out = $Desert/DesertOut
+#для локации леса
+@onready var attack_again_forest = $Forest/AttackAgainForest
+@onready var forest_in = $Forest/ForestIn
+@onready var forest_out = $Forest/ForestOut
 
 
 
@@ -56,7 +71,8 @@ func _ready():
 	randomize()
 	hide_all()
 	go_adventure()
-
+	inventory.update_inventory_ui()
+	
 func random_event():
 	var random_value = randf() * 100
 	var cumulative_probability = 0
@@ -78,7 +94,7 @@ func go_adventure():
 			output.text = 'нашли монетку(+1). всего {balance}'.format({'balance': player['money']})
 			go_next.visible = true
 		STATE.meet_mob:
-			current_mob = monsters.pick_random()
+			current_mob = MobsDb.get_mob(MobsDb.mobs.keys().pick_random())
 			output.text = "видите {name}, что будете делать?".format({'name': current_mob['name']})
 			go_next.visible = true
 			fight.visible = true
@@ -86,6 +102,10 @@ func go_adventure():
 			state_sphere()
 		STATE.slime_spawn:
 			slime_spawn()
+		STATE.desert_spawn:
+			desert_spawn()
+		STATE.forest_spawn:
+			forest_spawn()
 			
 			
 func meet_mob():
@@ -124,7 +144,19 @@ func attack_process(p_target, p_attack_direction):
 		if current_mob['hp'] <=0:
 			player['expirience'] += current_mob['expirience']
 			output.text = 'ударили в {body_part} и нанесли {damage} урона и убили {name}. Получено {expirience} опыта, поздравляем'.format({'damage': player['damage'], 'name': current_mob['name'], 'expirience': current_mob['expirience'],'body_part': p_attack_direction })
-			go_next.visible = true
+			_on_monster_defeated()
+			match current_location:
+				"slime_spawn":
+					attack_again.visible = true
+					slime_out.visible = true
+				"desert":
+					attack_again_desert.visible = true
+					desert_out.visible = true
+				"forest":
+					attack_again_forest.visible = true
+					forest_out.visible = true
+				_:
+					go_next.visible = true
 			return
 		else:
 			output.text = "Ударили в {body_part} и нанесли {damage} урона {name}, у него осталось {hp} энергии жизни".format({'damage': player['damage'], 'hp': current_mob['hp'], 'name': current_mob['name'], 'body_part': p_attack_direction})
@@ -146,7 +178,14 @@ func defence_process(p_target, p_defence_direction):
 			
 	defence.visible = false
 	attack.visible = true
-	
+
+func _on_monster_defeated():
+	for drop in current_mob['drops']:
+		if randf() <= drop['chance']:  # Проверяем шанс выпадения
+			var item_id = drop['item_id']
+			inventory.add_to_inventory(item_id)  # Добавляем предмет в инвентарь
+			output.text += "\nВы получили предмет: " + ItemDb.get_item(item_id)["name"]
+
 func state_sphere():
 	output.text = "Перед глазами появилась сфера. Чувство эйфории захватывает. знаете, что можете сделать что-то невероятное"
 	go_next.visible = true
@@ -174,6 +213,15 @@ func hide_all():
 	strength.visible = false
 	agility.visible = false
 	intelligence.visible = false
+	slime_in.visible = false
+	slime_out.visible = false
+	attack_again.visible = false
+	attack_again_desert.visible = false
+	desert_out.visible = false
+	desert_in.visible = false
+	forest_in.visible = false
+	forest_out.visible = false
+	attack_again_forest.visible = false
 	
 func upgrade_player(p_stat):
 	player['expirience'] -= lvl_config[player['lvl']]
@@ -198,17 +246,67 @@ func slime_spawn():
 	slime_in.visible = true
 	slime_out.visible = true
 	
-	
-	pass
-	
-
 func _on_slime_out_pressed():
 	hide_all()
+	current_location = ''
 	go_adventure()
 	
-
 func _on_slime_in_pressed():
 	hide_all()
+	current_location = "slime_spawn"  # Устанавливаем ID локации
+	var location_data = LocationDb.get_location(current_location)  # Получаем данные о локации
+	
+	# Выбираем случайного моба из локации
+	var mob_id = location_data["mobs"].pick_random()
+	current_mob = MobsDb.get_mob(mob_id)  # Получаем данные о мобе
 	output.text = 'Пещера кишит слаймами, один из них нападает'
-	current_mob = monsters[0]
 	meet_mob()
+
+func _on_attack_again_pressed():
+	hide_all()
+	var location_data = LocationDb.get_location(current_location)  # Получаем данные о локации
+	# Выбираем случайного моба из локации
+	var mob_id = location_data["mobs"].pick_random()
+	current_mob = MobsDb.get_mob(mob_id)  # Получаем данные о мобе
+	output.text = 'на вас нападает монстр'
+	meet_mob()
+
+func desert_spawn():
+	output.text = 'Видите песчаные барханы. Исследовать?'
+	desert_in.visible = true
+	desert_out.visible = true
+
+func _on_desert_in_pressed():
+	hide_all()
+	current_location = "desert"  # Устанавливаем ID локации
+	var location_data = LocationDb.get_location(current_location)  # Получаем данные о локации
+	# Выбираем случайного моба из локации
+	var mob_id = location_data["mobs"].pick_random()
+	current_mob = MobsDb.get_mob(mob_id)  # Получаем данные о мобе
+	output.text = 'Пустыня жаждет эмбиента'
+	meet_mob()
+
+func _on_desert_out_pressed():
+	hide_all()
+	current_location = ''
+	go_adventure()
+
+func forest_spawn():
+	output.text = 'Перед вами растилается темный и дремучий лес, желаете войти?'
+	forest_in.visible = true
+	forest_out.visible = true
+
+func _on_forest_in_pressed():
+	hide_all()
+	current_location = "forest"  # Устанавливаем ID локации
+	var location_data = LocationDb.get_location(current_location)  # Получаем данные о локации
+	# Выбираем случайного моба из локации
+	var mob_id = location_data["mobs"].pick_random()
+	current_mob = MobsDb.get_mob(mob_id)  # Получаем данные о мобе
+	output.text = 'Лес зовет вас'
+	meet_mob()
+
+func _on_forest_out_pressed():
+	hide_all()
+	current_location = ''
+	go_adventure()
